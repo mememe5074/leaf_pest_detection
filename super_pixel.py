@@ -12,6 +12,10 @@ from skimage.segmentation import felzenszwalb, slic, quickshift, watershed
 from skimage.segmentation import mark_boundaries
 from skimage.util import img_as_float
 from matplotlib.pyplot import figure
+import os
+
+path_img_data = 'D:/leaf_pest/PlantVillage-Dataset/raw/segmented/'
+entries = os.listdir(path_img_data)
 
 def mean_color(img, labels):
     out = np.zeros_like(img)
@@ -35,15 +39,18 @@ def plot_fz_segmentation(image):
     labels = felzenszwalb(image, scale=255, sigma=1, min_size=10)
     return mean_color(image, labels)
 
-img =read_image('/leaf_pest/image_segmentation/leaf.jpg')
+for i in entries:
+    entries_2 = [f for f in os.listdir(str(path_img_data)+str(i))]
+    for s in entries_2:
+        img =read_image(str(path_img_data+str(i)+'/'+str(s)))
+        rgbimg = img_as_float(img)
 
-rgbimg = img_as_float(img)
+        pic = plot_slic_segmentation(rgbimg)
 
-pic = plot_slic_segmentation(rgbimg)
+        #resizing 0 to 50
+        plt.figure(figsize=(2,2))
+        plt.imshow(plot_slic_segmentation(rgbimg))
+        plt.tight_layout()
+        plt.axis('off')
+        plt.savefig(fname=str(s), bbox_inches='tight', pad_inches=0)
 
-#resizing 0 to 50
-plt.figure(figsize=(2,2))
-plt.imshow(plot_slic_segmentation(rgbimg))
-plt.tight_layout()
-plt.axis('off')
-plt.savefig(fname='test.png', bbox_inches='tight', pad_inches=0)
